@@ -1,0 +1,16 @@
+run:
+  - exec: echo "Adding mozilla_on_startup.rb"
+  - file:
+      path: "/var/www/discourse/config/initializers/999-mozilla_on_startup.rb"
+      chmod: "+r"
+      contents: |
+        MOZILLA_DISCOURSE_ENV = :environment # overwritten
+
+        if MOZILLA_DISCOURSE_ENV == :dev
+          SiteSetting.disable_emails = "no"
+        end
+
+        if MOZILLA_DISCOURSE_ENV == :staging
+          User.where(moderator: true).update(moderator: false)
+          SiteSetting.disable_emails = "non-staff"
+        end
